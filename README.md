@@ -6,9 +6,9 @@ This repository contains Kubernetse manifest for morpho-web, merflow, and squirr
 
 Template/references for the microservices:
 
-- https://github.com/jpegleg/morpho-web - actix-web front end
+- https://github.com/jpegleg/morpho-web - actix-web front end using rustls and actix middleware
 - https://github.com/jpegleg/merflow - redis cache hydration via merflow sidecar
-- https://github.com/jpegleg/squirrel-tactix - actix-web backend
+- https://github.com/jpegleg/squirrel-tactix - actix-web backend using Diesel and postgresql
 
 The design is for postgresl and redis storage. The postgresql and redis deployments are not included in this repository.
 
