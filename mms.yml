@@ -1,0 +1,260 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: web-fe
+  labels:
+    name: web-fe
+  annotations:
+    app.kubernetes.io/name: web-fe
+    app.kubernetes.io/instance: eaas-m
+    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/component: website
+    app.kubernnetes.io/part-of: eaas-m
+    app.kubernetes.io/managed-by: manifest
+    app.kubernetes.io/created-by: jpegleg
+...
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: web-be
+  labels:
+    name: web-be
+  annotations:
+    app.kubernetes.io/name: web-be
+    app.kubernetes.io/instance: eaas-m
+    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/component: backend
+    app.kubernnetes.io/part-of: eaas-m
+    app.kubernetes.io/managed-by: manifest
+    app.kubernetes.io/created-by: jpegleg
+...
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: web-st
+  labels:
+    name: web-st
+  annotations:
+    app.kubernetes.io/name: web-st
+    app.kubernetes.io/instance: eaas-m
+    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/component: storage
+    app.kubernnetes.io/part-of: eaas-m
+    app.kubernetes.io/managed-by: manifest
+    app.kubernetes.io/created-by: jpegleg
+...
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: morpho
+  namespace: web-fe
+  labels:
+    app.kubernetes.io/name: morpho
+  annotations:
+    app.kubernetes.io/instance: eaas-template-m
+    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/component: website
+    app.kubernetes.io/managed-by: manifest
+    app.kubernetes.io/created-by: jpegleg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: morpho
+  template:
+    metadata:
+      labels:
+        app: morpho
+        app.kubernetes.io/name: morpho
+    spec:
+      containers:
+      - name: morpho-default
+        image: "morpho:default"
+        ports:
+        - name: morpho-https
+          containerPort: 443
+...
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: morpho
+  namespace: web-fe
+  annotations:
+    app.kubernetes.io/name: morpho
+    app.kubernetes.io/instance: morpho
+    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/component: website
+    app.kubernetes.io/managed-by: manifest
+    app.kubernetes.io/created-by: jpegleg
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: morpho
+  minreplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPrecentage: 33
+...
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: merflow
+  namespace: web-st
+  labels:
+    app.kubernetes.io/name: merflow
+  annotations:
+    app.kubernetes.io/instance: eaas-template-m
+    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/component: cache
+    app.kubernetes.io/managed-by: manifest
+    app.kubernetes.io/created-by: jpegleg
+spec:
+  selector:
+    matchLabels:
+      app: merflow
+  template:
+    metadata:
+      labels:
+        app: merflow
+        app.kubernetes.io/name: merflow
+    spec:
+      containers:
+      - name: merflow
+        image: "merflow:latest"
+      - name: redis
+        image: "redis:latest"
+        ports:
+        - name: redis
+          containerPort: 6379
+...
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sql
+  namespace: web-be
+  labels:
+    app.kubernetes.io/name: sql
+  annotations:
+    app.kubernetes.io/instance: eaas-template-m
+    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/managed-by: manifest
+    app.kubernetes.io/created-by: jpegleg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sql
+  template:
+    metadata:
+      labels:
+        app: sql
+        app.kubernetes.io/name: sql
+    spec:
+      containers:
+      - name: sql-default
+        image: "squirrel-tactix:default"
+        ports:
+        - name: fsql
+          containerPort: 8007
+...
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: sql
+  namespace: web-be
+  annotations:
+    app.kubernetes.io/name: sql
+    app.kubernetes.io/instance: sql
+    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/managed-by: manifest
+    app.kubernetes.io/created-by: jpegleg
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: sql
+  minreplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPrecentage: 33
+...
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eaas-m
+  namespace: eaas-m
+  annotations:
+    app.kubernetes.io/name: eaas-service
+    app.kubernetes.io/instance: eaas-template-m
+    app.kubernetes.io/version: 0.0.1
+    app.kubernetes.io/component: eaas-service
+    app.kubernetes.io/managed-by: manifest
+    app.kubernetes.io/created-by: jpegleg
+spec:
+  ports:
+  - port: 443
+    targetPort: 443
+    nodePort: 30456
+    protocol: TCP
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: morpho
+...
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: backend-access
+  namespace: web-fe
+spec:
+  podSelector:
+    matchLabels:
+      app: web-be
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: web-fe
+...
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: storage-access
+  namespace: web-st
+spec:
+  podSelector:
+    matchLabels:
+      app: web-be
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: web-st
+...
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: storage-access
+  namespace: web-fe
+spec:
+  podSelector:
+    matchLabels:
+      app: web-st
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: web-fe
+...
