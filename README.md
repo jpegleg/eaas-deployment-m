@@ -8,7 +8,7 @@ Template/references for the microservices:
 
 - https://github.com/jpegleg/morpho-web - actix-web front end using rustls and actix middleware
 - https://github.com/jpegleg/merflow - redis cache hydration via merflow sidecar
-- https://github.com/jpegleg/squirrel-tactix - actix-web backend using Diesel and postgresql
+- https://github.com/jpegleg/squirrel-tactix aka sql via json - actix-web backend using Diesel and postgresql
 
 The design is for postgresl and redis storage. The postgresql and redis deployments are not included in this repository.
 
@@ -19,3 +19,6 @@ can read and write in redis and send API requests to the squirrel-tactix instanc
 In this way, the merflow populates redis with postgres contents so that the morpho-web can read from redis for most data reads,
 while using async HTTP to perform database writes via squirrel-tactix calls. Morpho-web is the center of activity, while
 the other two services deal with different types of persistent or semi-persistent data.
+
+This manifests insecure backends are used, so wireguard is used to encrypt network traffic and NetworkPolicy is used to retrict access.
+Any ingress or exposed ports are to match the morpho service.
