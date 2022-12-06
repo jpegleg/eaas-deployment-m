@@ -1,16 +1,4 @@
 ---
-apiVersion: projectcalico.org/v3
-kind: FelixConfiguration
-metadata:
-  name: default
-spec:
-  bpfEnabled: true
-  bpfDisableUnprivileged: true
-  bpfKubeProxyIptablesCleanupEnabled: true
-  wireguardEnabled: true
-  bpfExternalServiceMode: DSR
-...
----
 apiVersion: v1
 kind: Namespace
 metadata:
