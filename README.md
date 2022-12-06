@@ -1,6 +1,6 @@
-# eaas-deployment-m  [ 🕸️ 🧜🏻‍♀️ 🐿️ ] + [ 🐱 🦀 ⛽ 🐘 ⚙️ ]
+# eaas-deployment-m  [ 🕸️ 🧜🏻‍♀️ 🐿️ ] 
 
-All rust, all minimized statically linked binaries, three microservices that cover many needs for websites and APIs.
+All rust, all minimized statically linked binaries in (scratch) container images, three microservices that cover many needs for websites and APIs.
 
 While the template here doesn't include authentication middlware or ZTA, the systems are designed to work well with more integrations.
 
