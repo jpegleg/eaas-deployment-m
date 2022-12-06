@@ -1,6 +1,8 @@
-# eaas-deployment-m 🦀 🧜🏻‍♀️ 🐿️
+# eaas-deployment-m  [ 🕸️ 🧜🏻‍♀️ 🐿️ ] + [ 🐱 🦀 ⛽ 🐘 ⚙️ ]
 
-All rust, all minimized statically linked binaries, three microservices that cover many needs.
+All rust, all minimized statically linked binaries, three microservices that cover many needs for websites and APIs.
+
+While the template here doesn't include authentication middlware or ZTA, the systems are designed to work well with more integrations.
 
 This repository contains Kubernetse manifest for morpho-web, merflow, and squirrel-tactix stack.
 
@@ -33,4 +35,4 @@ calicoctl apply -f mms-net.yml
 Validate that the wireguard encryption is working before using real data. And to improve it futher, flying-squirrel-tactix is the https version of squirrel-tactix, which implements rustls for squirrel-tactix. That works here too! Just be sure
 to manage trust on the morpho-web side :)
 
-Securing merflow, redis, and postgres require efforts not included in this repository. This manifest is designed to protect them, but only applies automatic VPN for their network traffic, it doesn't inherently solve security issues in those templates. Morpho-web is extremely secure, and holds the front door for us. Merflow, redis, postgres, and squirrel-tactix are less secure because they don't have proper management of authentication or network encryption built in.
+Comprehesively securing merflow, redis, and postgres require efforts not included in this repository. This manifest is designed to protect them, but only applies automatic VPN for their network traffic, it doesn't inherently solve security issues in those templates. Morpho-web is extremely secure, and holds the front door for us. Merflow, redis, postgres, and squirrel-tactix are less secure because they don't have proper management of authentication or network encryption built in. We leverage wireguard to compensate for the lack of network encryption, but the authentication aspect may involve added middleware to morpho-web and potentially squirrel-tactix.
