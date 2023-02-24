@@ -4,7 +4,7 @@ All rust, all minimized statically linked binaries in (scratch) container images
 
 While the template here doesn't include authentication middlware or ZTA, the systems are designed to work well with more integrations.
 
-This repository contains Kubernetse manifest for morpho-web, merflow, and squirrel-tactix stack.
+This repository contains Kubernetes manifest for morpho-web, merflow, and squirrel-tactix stack.
 
 Template/references for the microservices:
 
